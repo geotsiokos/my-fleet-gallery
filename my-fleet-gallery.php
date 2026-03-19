@@ -100,12 +100,12 @@ add_action( 'init', function() {
 		add_shortcode( 'fleet_gallery', function( $atts ) {
 			wp_enqueue_style( 'fleet-gallery-css' );
 			$a = shortcode_atts( array(
-				'category' => '',
+				'category'    => '',
 				'index_title' => 'What\'s Included',
 				'index_items' => 'Full Insurance,2 Helmets,Unlimited KM,24/7 Assist,Free Delivery',
-				'wa_number' => '1234567890',
-				'wa_text' => 'Questions? WhatsApp Us',
-				'autoplay' => '5000'
+				'wa_number'   => '1234567890',
+				'wa_text'     => 'Questions? WhatsApp Us',
+				'autoplay'    => '5000'
 			), $atts );
 
 			$items_html = '';

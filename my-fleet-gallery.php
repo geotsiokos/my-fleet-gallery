@@ -70,6 +70,7 @@ add_action( 'init', function() {
 		.model-name { font-size: 1.25rem; font-weight: 800; margin: 0 0 10px 0; color: #111; }
 		.specs-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
 		.spec-pill { background: #f1f3f5; color: #666; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; }
+		.cta-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
 
 		.btn-book { display: block; width: 100%; text-align: center; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none !important; background: #1e272e; color: #fff !important; }
 

@@ -1,0 +1,47 @@
+.fleet-wrapper { display: flex; max-width: 1400px; margin: 40px auto; gap: 0; align-items: flex-start; position: relative; font-family: sans-serif; }
+.fleet-main { flex: 1; min-width: 0; position: relative; background: #fbfbfb; padding: 30px; border-radius: 16px; }
+
+.index-card-base { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); z-index: 2; position: relative; }
+.index-sidebar { flex: 0 0 260px; position: sticky; top: 100px; margin-right: -20px; display: block; }
+.mobile-index-header { display: none; }
+
+.index-sidebar::after { content: ''; position: absolute; background: #fff; border: 1px solid #eee; width: 16px; height: 16px; transform: rotate(45deg); display: block; right: -8px; top: 40px; border-bottom: 0; border-left: 0; }
+.index-list { list-style: none; padding: 0; margin: 0 0 20px 0; border-bottom: 1px solid #f1f1f1; padding-bottom: 15px; }
+.index-list li { margin-bottom: 10px; display: flex; align-items: center; font-size: 0.9rem; font-weight: 600; color: #444; }
+.index-list li::before { content: '✓'; color: #25D366; font-weight: 900; margin-right: 10px; }
+
+.index-wa-support { display: flex; align-items: center; gap: 10px; text-decoration: none !important; color: #1e272e !important; font-weight: 700; font-size: 0.85rem; padding: 10px; background: #f9f9f9; border-radius: 10px; transition: 0.2s; }
+.index-wa-support:hover { background: #25D366; color: #fff !important; }
+.wa-icon { background: #25D366; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 14px; font-style: normal; }
+
+.fleet-row { display: flex; gap: 15px; padding: 10px 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.vehicle-card { flex: 0 0 46%; background: #fff; border-radius: 16px; border: 1px solid #eee; overflow: hidden; position: relative; scroll-snap-align: start; }
+.price-badge { position: absolute; top: 12px; right: 12px; background: #1e272e; color: #fff; padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; z-index: 5; }
+
+.image-box { width: 100%; height: 220px; background: #eee; }
+.image-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+.model-name { font-size: 1.25rem; font-weight: 800; margin: 0 0 10px 0; color: #111; }
+.specs-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
+.spec-pill { background: #f1f3f5; color: #666; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; }
+
+.cta-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
+.btn-book { display: block; width: 100%; text-align: center; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none !important; background: #1e272e; color: #fff !important; box-sizing: border-box; }
+
+.fleet-dots { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 25px; width: 100%; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; cursor: pointer; transition: 0.3s; border: none; padding: 0; outline: none; }
+.dot.active { background: #1e272e; width: 22px; border-radius: 10px; }
+
+.nav-btn { position: absolute; top: 50%; width: 40px; height: 40px; background: #fff; border-radius: 50%; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transform: translateY(-50%); }
+.nav-btn:disabled { opacity: 0.2; pointer-events: none; }
+.prev { left: 5px; } .next { right: 5px; }
+
+@media (max-width: 1100px) {
+    .fleet-wrapper { display: block; padding: 0 15px; }
+    .index-sidebar { display: none !important; }
+    .mobile-index-header { display: block; margin-bottom: 20px; }
+    .fleet-main { padding: 10px 10px 70px 10px; }
+    .vehicle-card { flex: 0 0 88%; }
+    .nav-btn { top: auto; bottom: 20px; transform: none; }
+    .prev { left: 10%; } .next { right: 10%; }
+}

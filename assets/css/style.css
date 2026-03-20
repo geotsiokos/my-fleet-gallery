@@ -37,11 +37,11 @@
 .prev { left: 5px; } .next { right: 5px; }
 
 @media (max-width: 1100px) {
-    .fleet-wrapper { display: block; padding: 0 15px; }
-    .index-sidebar { display: none !important; }
-    .mobile-index-header { display: block; margin-bottom: 20px; }
-    .fleet-main { padding: 10px 10px 70px 10px; }
-    .vehicle-card { flex: 0 0 88%; }
-    .nav-btn { top: auto; bottom: 20px; transform: none; }
-    .prev { left: 10%; } .next { right: 10%; }
+	.fleet-wrapper { display: block; /*padding: 0 15px;*/ }
+	.index-sidebar { display: none !important; }
+	.mobile-index-header { display: block; margin-bottom: 20px; }
+	.fleet-main { padding: 10px 10px 70px 10px; }
+	.vehicle-card { flex: 0 0 88%; }
+	.nav-btn { top: auto; bottom: 20px; transform: none; }
+	.prev { left: 10%; } .next { right: 10%; }
 }

@@ -60,20 +60,18 @@
         flex-wrap: nowrap !important;
         transition: transform 0.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) !important;
         width: auto !important;
-        padding-left: 15px !important; /* Visual padding for the first card */
+        padding: 0 0 15px 15px !important; /* Visual padding for the first card */
     }
 	.vehicle-card {
-		/* 82vw means the card takes up 82% of the screen.
-		   The remaining 18% is shared between the margin 
-		   and the "peak" of the next card.
-		*/
-		flex: 0 0 80vw !important; 
-		min-width: 80vw !important;
-		margin-right: 20px !important;
+		/* 75% of viewport width */
+		flex: 0 0 75vw !important; 
+		min-width: 75vw !important;
+		margin-right: 15px !important;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 	}
-	.nav-btn { display: flex !important; position: absolute; top: 50%; width: 40px; height: 40px; background: #fff; border-radius: 50%; z-index: 10; border: 1px solid #eee; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; }
-	.nav-btn.prev { left: -10px; }
-	.nav-btn.next { right: -10px; }
+	.nav-btn { display: flex !important; position: absolute; top: 95%; width: 40px; height: 40px; background: #fff; border-radius: 50%; z-index: 10; border: 1px solid #eee; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; }
+	.nav-btn.prev { left: 10%; }
+	.nav-btn.next { right: 10%; }
 	.fleet-dots { display: flex !important; justify-content: center; gap: 8px; margin-top: 20px; }
 	.dot { width: 8px; height: 8px; background: #ccc; border-radius: 50%; transition: 0.3s; }
 	.dot.active { background: #1e272e; width: 20px; border-radius: 10px; }

@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: Modern Fleet Gallery
- * Description: Grid-based fleet with mobile snap-scroll and intersection observer dots.
- * Version: 3.1.0
+ * Description: Hybrid Layout: Desktop Grid / Mobile Carousel.
+ * Version: 2.3.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'wp_enqueue_scripts', function() {
-	wp_enqueue_style( 'fleet-gallery-style', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), '3.1.0' );
-	wp_enqueue_script( 'fleet-gallery-script', plugin_dir_url( __FILE__ ) . 'assets/js/fleet-script.js', array(), '3.1.0', true );
+	wp_enqueue_style( 'fleet-gallery-style', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), '2.3.0' );
+	wp_enqueue_script( 'fleet-gallery-script', plugin_dir_url( __FILE__ ) . 'assets/js/fleet-script.js', array(), '2.3.0', true );
 });
 	
 	add_action( 'init', function() {
@@ -44,7 +44,8 @@ add_action( 'wp_enqueue_scripts', function() {
 							'index_title' => 'What\'s Included',
 							'index_items' => 'Full Insurance,2 Helmets,Unlimited KM,24/7 Assist,Free Delivery',
 							'wa_number'   => '1234567890',
-							'wa_text'     => 'Questions? WhatsApp Us'
+							'wa_text'     => 'Questions? WhatsApp Us',
+							'autoplay'    => '5000'
 					), $atts );
 					
 					$items_html = '';
@@ -55,12 +56,14 @@ add_action( 'wp_enqueue_scripts', function() {
 					$query = new WP_Query(['post_type' => 'fleet_vehicle', 'posts_per_page' => -1, 'category_name' => $a['category'], 'orderby' => 'menu_order', 'order' => 'ASC']);
 					$uid = uniqid( 'cat_' . sanitize_title($a['category']) . '_' );
 					
-					$o = '<div class="fleet-wrapper" id="' . esc_attr( $uid ) . '">';
+					$o = '<div class="fleet-wrapper" id="' . esc_attr( $uid ) . '" data-autoplay="' . esc_attr( $a['autoplay'] ) . '">';
 					$o .= '<aside class="index-card-base index-sidebar"><h2 style="font-size: 1rem; margin-top:0;">' . esc_html( $a['index_title'] ) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/' . $clean_wa . '" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>' . esc_html( $a['wa_text'] ) . '</span></a></aside>';
 					$o .= '<div class="fleet-main">';
 					$o .= '<div class="index-card-base mobile-index-header"><h2 style="font-size: 0.95rem; margin-top:0;">' . esc_html( $a['index_title'] ) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/' . $clean_wa . '" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>' . esc_html( $a['wa_text'] ) . '</span></a></div>';
 					
-					$o .= '<div class="fleet-grid">';
+					$o .= '<button class="nav-btn prev" aria-label="Previous">❮</button>';
+					$o .= '<div class="fleet-row">';
+					
 					if ( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
 					$price = get_post_meta( get_the_ID(), '_fleet_price', true );
 					$link = get_post_meta( get_the_ID(), '_fleet_link', true ) ?: '#';
@@ -73,9 +76,11 @@ add_action( 'wp_enqueue_scripts', function() {
 					foreach( $specs as $s ) if( !empty( trim( $s ) ) ) $o .= '<span class="spec-pill">' . esc_html( trim( $s ) ) . '</span>';
 					$o .= '</div><div class="cta-group"><a href="' . esc_url( $link ) . '" class="btn-book">Book Online</a></div></div></article>';
 					endwhile; wp_reset_postdata(); endif;
-					$o .= '</div>'; // close fleet-grid
 					
-					$o .= '<div class="fleet-dots"></div>'; // DOTS RE-ADDED HERE
+					$o .= '</div>';
+					$o .= '<button class="nav-btn next" aria-label="Next">❯</button>';
+					$o .= '<div class="fleet-dots"></div>';
 					$o .= '</div></div>';
+					
 					return $o;
 				});

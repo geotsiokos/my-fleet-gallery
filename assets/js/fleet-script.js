@@ -1,53 +1,47 @@
-/**
- * Modern Fleet Gallery - JS Logic v3.2.0
- */
 document.addEventListener('DOMContentLoaded', function() {
-	console.log('Fleet Gallery JS Loaded'); // Check console to verify
+    const wrappers = document.querySelectorAll('.fleet-wrapper');
 
-	const fleetGrids = document.querySelectorAll('.fleet-grid');
+    wrappers.forEach(wrapper => {
+        const row = wrapper.querySelector('.fleet-row');
+        const cards = wrapper.querySelectorAll('.vehicle-card');
+        const prevBtn = wrapper.querySelector('.prev');
+        const nextBtn = wrapper.querySelector('.next');
+        const dotsCont = wrapper.querySelector('.fleet-dots');
+        
+        let index = 0;
 
-	fleetGrids.forEach(grid => {
-		const parent = grid.parentElement;
-		const dotsContainer = parent.querySelector('.fleet-dots');
-		const cards = grid.querySelectorAll('.vehicle-card');
+        // Function to check if we are on mobile
+        const isMobile = () => window.innerWidth <= 768;
 
-		if (!dotsContainer || cards.length < 2) return;
+        // Init Dots
+        cards.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.addEventListener('click', () => { if(isMobile()) goToSlide(i); });
+            dotsCont.appendChild(dot);
+        });
 
-		// Clear existing dots and create new ones
-		dotsContainer.innerHTML = '';
-		cards.forEach((card, index) => {
-			const dot = document.createElement('span');
-			dot.classList.add('dot');
-			if (index === 0) dot.classList.add('active');
-			dotsContainer.appendChild(dot);
-		});
+        const dots = dotsCont.querySelectorAll('.dot');
 
-		const dots = dotsContainer.querySelectorAll('.dot');
+        function updateSlider() {
+            if (!isMobile()) {
+                row.style.transform = 'none'; // Reset transform on Desktop
+                return;
+            }
+            const cardWidth = cards[0].offsetWidth + 20; // 20 is gap
+            row.style.transform = `translateX(${-index * cardWidth}px)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        }
 
-		// Intersection Observer to handle "Active" dot state
-		const options = {
-			root: grid,
-			threshold: 0.5, // Trigger when 50% of the card is visible
-			active: true
-		};
+        function goToSlide(n) {
+            index = (n + cards.length) % cards.length;
+            updateSlider();
+        }
 
-		const observer = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					const cardIndex = Array.from(cards).indexOf(entry.target);
-					
-					// Update Dots
-					dots.forEach((dot, i) => {
-						if (i === cardIndex) {
-							dot.classList.add('active');
-						} else {
-							dot.classList.remove('active');
-						}
-					});
-				}
-			});
-		}, options);
-
-		cards.forEach(card => observer.observe(card));
-	});
+        prevBtn.addEventListener('click', () => goToSlide(index - 1));
+        nextBtn.addEventListener('click', () => goToSlide(index + 1));
+        
+        window.addEventListener('resize', updateSlider);
+        updateSlider(); // Initial check
+    });
 });

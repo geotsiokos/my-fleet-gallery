@@ -1,47 +1,58 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const wrappers = document.querySelectorAll('.fleet-wrapper');
+window.addEventListener('click', function(e) {
+    // 1. Find the closest wrapper to the click
+    const wrapper = e.target.closest('.fleet-wrapper');
+    if (!wrapper) return;
 
-    wrappers.forEach(wrapper => {
-        const row = wrapper.querySelector('.fleet-row');
-        const cards = wrapper.querySelectorAll('.vehicle-card');
-        const prevBtn = wrapper.querySelector('.prev');
-        const nextBtn = wrapper.querySelector('.next');
-        const dotsCont = wrapper.querySelector('.fleet-dots');
-        
-        let index = 0;
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
 
-        // Function to check if we are on mobile
-        const isMobile = () => window.innerWidth <= 768;
+    const row = wrapper.querySelector('.fleet-row');
+    const cards = wrapper.querySelectorAll('.vehicle-card');
+    const dots = wrapper.querySelectorAll('.dot');
+    
+    // Calculate movement
+    //const gap = 15;
+	const card = cards[0];
+	const style = window.getComputedStyle(card);
+	const marginRight = parseFloat(style.marginRight);
+	const cardWidth = card.offsetWidth + marginRight;
 
-        // Init Dots
-        cards.forEach((_, i) => {
-            const dot = document.createElement('div');
-            dot.className = 'dot' + (i === 0 ? ' active' : '');
-            dot.addEventListener('click', () => { if(isMobile()) goToSlide(i); });
-            dotsCont.appendChild(dot);
-        });
+    // Get current index from a data attribute (or default to 0)
+    let index = parseInt(wrapper.getAttribute('data-current-index')) || 0;
 
-        const dots = dotsCont.querySelectorAll('.dot');
+    // Next Button
+    if (e.target.closest('.next')) {
+        e.preventDefault();
+        index = (index + 1 < cards.length) ? index + 1 : 0;
+    } 
+    // Prev Button
+    else if (e.target.closest('.prev')) {
+        e.preventDefault();
+        index = (index - 1 >= 0) ? index - 1 : cards.length - 1;
+    } 
+    // Dot Click
+    else if (e.target.classList.contains('dot')) {
+        index = Array.from(dots).indexOf(e.target);
+    } 
+    else {
+        return; // Clicked something else
+    }
 
-        function updateSlider() {
-            if (!isMobile()) {
-                row.style.transform = 'none'; // Reset transform on Desktop
-                return;
-            }
-            const cardWidth = cards[0].offsetWidth + 20; // 20 is gap
-            row.style.transform = `translateX(${-index * cardWidth}px)`;
-            dots.forEach((d, i) => d.classList.toggle('active', i === index));
-        }
+    // Apply movement
+    row.style.transform = `translateX(${-index * cardWidth}px)`;
+    
+    // Update Dots
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    
+    // Save state back to wrapper
+    wrapper.setAttribute('data-current-index', index);
+});
 
-        function goToSlide(n) {
-            index = (n + cards.length) % cards.length;
-            updateSlider();
-        }
-
-        prevBtn.addEventListener('click', () => goToSlide(index - 1));
-        nextBtn.addEventListener('click', () => goToSlide(index + 1));
-        
-        window.addEventListener('resize', updateSlider);
-        updateSlider(); // Initial check
+// Reset on resize
+window.addEventListener('resize', function() {
+    document.querySelectorAll('.fleet-wrapper').forEach(w => {
+        w.setAttribute('data-current-index', 0);
+        const row = w.querySelector('.fleet-row');
+        if (row) row.style.transform = 'none';
     });
 });

@@ -1,86 +1,63 @@
 <?php
 /**
  * Plugin Name: Modern Fleet Gallery
- * Description: Hybrid Layout: Desktop Grid / Mobile Carousel.
- * Version: 2.3.0
+ * Description: Viewport-Constrained Hybrid Layout (Grid Desktop / Carousel Mobile)
+ * Version: 2.4.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'wp_enqueue_scripts', function() {
-	wp_enqueue_style( 'fleet-gallery-style', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), '2.3.0' );
-	wp_enqueue_script( 'fleet-gallery-script', plugin_dir_url( __FILE__ ) . 'assets/js/fleet-script.js', array(), '2.3.0', true );
+	wp_enqueue_style( 'fleet-gallery-style', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), '2.4.0' );
+	wp_enqueue_script( 'fleet-gallery-script', plugin_dir_url( __FILE__ ) . 'assets/js/fleet-script.js', array(), '2.4.0', true );
 });
 	
-	add_action( 'init', function() {
-		register_post_type('fleet_vehicle', [
-				'labels' => [ 'name' => 'Vehicles', 'singular_name' => 'Vehicle' ],
-				'public' => true,
-				'menu_icon' => 'dashicons-cart',
-				'supports' => [ 'title', 'thumbnail', 'excerpt' ],
-				'taxonomies' => [ 'category' ],
-		]);
-	});
+	add_shortcode( 'fleet_gallery', function( $atts ) {
+		$a = shortcode_atts( array(
+				'category'    => '',
+				'index_title' => 'What\'s Included',
+				'index_items' => 'Full Insurance,2 Helmets,Unlimited KM,24/7 Assist,Free Delivery',
+				'wa_number'   => '1234567890',
+				'wa_text'     => 'Questions? WhatsApp Us'
+		), $atts );
 		
-		add_action('add_meta_boxes', function() {
-			add_meta_box('fleet_details_id', 'Vehicle Details', 'fleet_details_html', 'fleet_vehicle', 'side');
-		});
-			
-			function fleet_details_html($post) {
-				$price = get_post_meta($post->ID, '_fleet_price', true);
-				$url = get_post_meta($post->ID, '_fleet_link', true);
-				echo '<p><label>Price (€):</label><input type="text" name="fleet_price_field" value="'.esc_attr($price).'" style="width:100%"></p>';
-				echo '<p><label>Booking Link:</label><input type="text" name="fleet_link_field" value="'.esc_attr($url).'" style="width:100%"></p>';
-			}
-			
-			add_action('save_post', function($post_id) {
-				if ( isset( $_POST['fleet_price_field'] ) ) update_post_meta( $post_id, '_fleet_price', sanitize_text_field( $_POST['fleet_price_field'] ) );
-				if ( isset( $_POST['fleet_link_field'] ) ) update_post_meta( $post_id, '_fleet_link', esc_url_raw( $_POST['fleet_link_field'] ) );
-			});
-				
-				add_shortcode( 'fleet_gallery', function( $atts ) {
-					$a = shortcode_atts( array(
-							'category'    => '',
-							'index_title' => 'What\'s Included',
-							'index_items' => 'Full Insurance,2 Helmets,Unlimited KM,24/7 Assist,Free Delivery',
-							'wa_number'   => '1234567890',
-							'wa_text'     => 'Questions? WhatsApp Us',
-							'autoplay'    => '5000'
-					), $atts );
-					
-					$items_html = '';
-					foreach( explode( ',', $a['index_items'] ) as $i ) {
-						$items_html .= '<li>' . esc_html( trim( $i ) ) . '</li>';
-					}
-					$clean_wa = preg_replace( '/[^0-9]/', '', $a['wa_number'] );
-					$query = new WP_Query(['post_type' => 'fleet_vehicle', 'posts_per_page' => -1, 'category_name' => $a['category'], 'orderby' => 'menu_order', 'order' => 'ASC']);
-					$uid = uniqid( 'cat_' . sanitize_title($a['category']) . '_' );
-					
-					$o = '<div class="fleet-wrapper" id="' . esc_attr( $uid ) . '" data-autoplay="' . esc_attr( $a['autoplay'] ) . '">';
-					$o .= '<aside class="index-card-base index-sidebar"><h2 style="font-size: 1rem; margin-top:0;">' . esc_html( $a['index_title'] ) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/' . $clean_wa . '" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>' . esc_html( $a['wa_text'] ) . '</span></a></aside>';
-					$o .= '<div class="fleet-main">';
-					$o .= '<div class="index-card-base mobile-index-header"><h2 style="font-size: 0.95rem; margin-top:0;">' . esc_html( $a['index_title'] ) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/' . $clean_wa . '" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>' . esc_html( $a['wa_text'] ) . '</span></a></div>';
-					
-					$o .= '<button class="nav-btn prev" aria-label="Previous">❮</button>';
-					$o .= '<div class="fleet-row">';
-					
-					if ( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
-					$price = get_post_meta( get_the_ID(), '_fleet_price', true );
-					$link = get_post_meta( get_the_ID(), '_fleet_link', true ) ?: '#';
-					$title = get_the_title();
-					$o .= '<article class="vehicle-card">';
-					if( $price ) $o .= '<div class="price-badge">€' . esc_html( $price ) . '</div>';
-					$o .= '<div class="image-box">' . get_the_post_thumbnail( get_the_ID(), 'medium_large', ['alt' => $title] ) . '</div>';
-					$o .= '<div class="content"><h3 class="model-name">' . esc_html( $title ) . '</h3><div class="specs-list">';
-					$specs = explode( ',', get_the_excerpt() );
-					foreach( $specs as $s ) if( !empty( trim( $s ) ) ) $o .= '<span class="spec-pill">' . esc_html( trim( $s ) ) . '</span>';
-					$o .= '</div><div class="cta-group"><a href="' . esc_url( $link ) . '" class="btn-book">Book Online</a></div></div></article>';
-					endwhile; wp_reset_postdata(); endif;
-					
-					$o .= '</div>';
-					$o .= '<button class="nav-btn next" aria-label="Next">❯</button>';
-					$o .= '<div class="fleet-dots"></div>';
-					$o .= '</div></div>';
-					
-					return $o;
-				});
+		$items_html = '';
+		foreach( explode( ',', $a['index_items'] ) as $i ) {
+			$items_html .= '<li>' . esc_html( trim( $i ) ) . '</li>';
+		}
+		$clean_wa = preg_replace( '/[^0-9]/', '', $a['wa_number'] );
+		$query = new WP_Query(['post_type' => 'fleet_vehicle', 'posts_per_page' => -1, 'category_name' => $a['category'], 'orderby' => 'menu_order', 'order' => 'ASC']);
+		$uid = uniqid( 'fleet_' );
+		
+		$o = '<div class="fleet-wrapper" id="' . esc_attr( $uid ) . '">';
+		
+		// Desktop Sidebar
+		$o .= '<aside class="index-card-base index-sidebar"><h2 style="font-size:1rem;margin:0 0 15px 0;">' . esc_html($a['index_title']) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/'.$clean_wa.'" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>'.$a['wa_text'].'</span></a></aside>';
+		
+		$o .= '<div class="fleet-main">';
+		// Mobile Header
+		$o .= '<div class="index-card-base mobile-index-header"><h2 style="font-size:0.95rem;margin:0 0 15px 0;">' . esc_html($a['index_title']) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/'.$clean_wa.'" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>'.$a['wa_text'].'</span></a></div>';
+		
+		// The Scissors (Viewport)
+		$o .= '<div class="fleet-viewport">';
+		$o .= '<div class="fleet-row">';
+		if ( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
+		$price = get_post_meta( get_the_ID(), '_fleet_price', true );
+		$link = get_post_meta( get_the_ID(), '_fleet_link', true ) ?: '#';
+		$o .= '<article class="vehicle-card">';
+		if($price) $o .= '<div class="price-badge">€' . esc_html($price) . '</div>';
+		$o .= '<div class="image-box">' . get_the_post_thumbnail( get_the_ID(), 'medium_large' ) . '</div>';
+		$o .= '<div class="content"><h3 class="model-name">' . get_the_title() . '</h3><div class="specs-list">';
+		foreach(explode(',', get_the_excerpt()) as $s) if(!empty(trim($s))) $o .= '<span class="spec-pill">'.esc_html(trim($s)).'</span>';
+		$o .= '</div><div class="cta-group"><a href="'.esc_url($link).'" class="btn-book">Book Online</a></div></div></article>';
+		endwhile; wp_reset_postdata(); endif;
+		$o .= '</div>'; // close fleet-row
+		$o .= '</div>'; // close fleet-viewport
+		
+		$o .= '<button class="nav-btn prev" aria-label="Prev">❮</button>';
+		$o .= '<button class="nav-btn next" aria-label="Next">❯</button>';
+		$o .= '<div class="fleet-dots"></div>';
+		$o .= '</div></div>';
+		
+		return $o;
+	});

@@ -1,67 +1,53 @@
+/**
+ * Modern Fleet Gallery - JS Logic v3.2.0
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    const galleries = document.querySelectorAll('.fleet-wrapper');
+	console.log('Fleet Gallery JS Loaded'); // Check console to verify
 
-    galleries.forEach(wrapper => {
-        const row = wrapper.querySelector('.fleet-row');
-        const dotsCont = wrapper.querySelector('.fleet-dots');
-        const prevBtn = wrapper.querySelector('.nav-btn.prev');
-        const nextBtn = wrapper.querySelector('.nav-btn.next');
-        const speed = parseInt(wrapper.getAttribute('data-autoplay')) || 5000;
-        let timer;
+	const fleetGrids = document.querySelectorAll('.fleet-grid');
 
-        function updateUI() {
-            const cards = row.querySelectorAll('.vehicle-card');
-            const dots = dotsCont.querySelectorAll('.dot');
-            if(!cards.length) return;
+	fleetGrids.forEach(grid => {
+		const parent = grid.parentElement;
+		const dotsContainer = parent.querySelector('.fleet-dots');
+		const cards = grid.querySelectorAll('.vehicle-card');
 
-            prevBtn.disabled = row.scrollLeft <= 10;
-            nextBtn.disabled = row.scrollLeft + row.offsetWidth >= row.scrollWidth - 15;
+		if (!dotsContainer || cards.length < 2) return;
 
-            let index = Math.round(row.scrollLeft / (cards[0].offsetWidth + 15));
-            index = Math.max(0, Math.min(index, dots.length - 1));
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-        }
+		// Clear existing dots and create new ones
+		dotsContainer.innerHTML = '';
+		cards.forEach((card, index) => {
+			const dot = document.createElement('span');
+			dot.classList.add('dot');
+			if (index === 0) dot.classList.add('active');
+			dotsContainer.appendChild(dot);
+		});
 
-        function scroll(dir) {
-            const card = row.querySelector('.vehicle-card');
-            if(!card) return;
-            const isAtEnd = row.scrollLeft + row.offsetWidth >= row.scrollWidth - 15;
-            
-            if (dir === 1 && isAtEnd) {
-                row.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
-                row.scrollBy({ left: (card.offsetWidth + 15) * dir, behavior: 'smooth' });
-            }
-            resetAutoplay();
-        }
+		const dots = dotsContainer.querySelectorAll('.dot');
 
-        function createDots() {
-            const cards = row.querySelectorAll('.vehicle-card');
-            dotsCont.innerHTML = '';
-            cards.forEach((_, i) => {
-                const dot = document.createElement('button');
-                dot.className = 'dot' + (i === 0 ? ' active' : '');
-                dot.onclick = () => {
-                    row.scrollTo({ left: cards[i].offsetLeft - row.offsetLeft - 15, behavior: 'smooth' });
-                    resetAutoplay();
-                };
-                dotsCont.appendChild(dot);
-            });
-        }
+		// Intersection Observer to handle "Active" dot state
+		const options = {
+			root: grid,
+			threshold: 0.5, // Trigger when 50% of the card is visible
+			active: true
+		};
 
-        function startAutoplay() { if (speed > 0) timer = setInterval(() => scroll(1), speed); }
-        function resetAutoplay() { clearInterval(timer); startAutoplay(); }
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					const cardIndex = Array.from(cards).indexOf(entry.target);
+					
+					// Update Dots
+					dots.forEach((dot, i) => {
+						if (i === cardIndex) {
+							dot.classList.add('active');
+						} else {
+							dot.classList.remove('active');
+						}
+					});
+				}
+			});
+		}, options);
 
-        // Init
-        createDots();
-        startAutoplay();
-        row.addEventListener('scroll', updateUI);
-        prevBtn.onclick = () => scroll(-1);
-        nextBtn.onclick = () => scroll(1);
-        wrapper.addEventListener('mouseenter', () => clearInterval(timer));
-        wrapper.addEventListener('mouseleave', startAutoplay);
-        
-        // Final UI check
-        setTimeout(updateUI, 100);
-    });
+		cards.forEach(card => observer.observe(card));
+	});
 });

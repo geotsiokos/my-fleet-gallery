@@ -7,11 +7,11 @@
 
 /* --- SHARED CARD STYLES --- */
 .index-card-base { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-.index-list { list-style: none !important; padding: 0 !important; margin: 0 0 20px 0 !important; }
+.index-list { list-style: none !important; padding: 0 !important; margin: 0 0 20px 0 !important; padding: 0 0 15px !important; border-bottom: 1px solid #f1f1f1; }
 .index-list li { margin-bottom: 10px; display: flex; align-items: center; font-size: 0.9rem; font-weight: 600; color: #444; }
 .index-list li::before { content: '✓'; color: #25D366; font-weight: 900; margin-right: 12px; }
-.index-wa-support { display: flex; align-items: center; gap: 10px; text-decoration: none !important; padding: 12px; background: #f4f7f6; border-radius: 12px; }
-.wa-icon { background: #25D366; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-style: normal; }
+.index-wa-support { display: flex; align-items: center; gap: 10px; text-decoration: none !important; padding: 12px; background: #f4f7f6; border-radius: 12px; font-size: 0.85rem; font-weight: 700; }
+.wa-icon { background: #25D366; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 14px; font-weight: bold; font-style: normal; }
 
 /* --- VEHICLE CARDS --- */
 .vehicle-card { background: #fff; border: 1px solid #eee; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; position: relative; height: 100%; }

@@ -6,7 +6,7 @@
 .fleet-viewport { width: 100%; overflow: hidden; position: relative; }
 
 /* --- SHARED CARD STYLES --- */
-.index-card-base { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+.index-card-base { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); z-index: 10; }
 .index-list { list-style: none !important; padding: 0 !important; margin: 0 0 20px 0 !important; padding: 0 0 15px !important; border-bottom: 1px solid #f1f1f1; }
 .index-list li { margin-bottom: 10px; display: flex; align-items: center; font-size: 0.9rem; font-weight: 600; color: #444; }
 .index-list li::before { content: '✓'; color: #25D366; font-weight: 900; margin-right: 12px; }

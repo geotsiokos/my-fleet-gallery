@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Modern Fleet Gallery
  * Description: Hybrid Layout with Manual Sort Order (menu_order)
- * Version: 2.5.0
+ * Version: 1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

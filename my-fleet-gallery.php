@@ -60,6 +60,7 @@ add_action( 'wp_enqueue_scripts', function() {
 				// 5. Shortcode with Sort Query
 				add_shortcode( 'fleet_gallery', function( $atts ) {
 					$a = shortcode_atts( array(
+							'title'       => '',
 							'category'    => '',
 							'index_title' => 'What\'s Included',
 							'index_items' => 'Full Insurance,2 Helmets,Unlimited KM,24/7 Assist,Free Delivery',
@@ -84,14 +85,25 @@ add_action( 'wp_enqueue_scripts', function() {
 					
 					$uid = uniqid( 'fleet_' );
 					$o = '<div class="fleet-wrapper" id="' . esc_attr( $uid ) . '">';
-					
+
 					// Sidebar (Desktop)
-					$o .= '<aside class="index-card-base index-sidebar"><h2 style="font-size:1rem;margin:0 0 15px 0;">' . esc_html($a['index_title']) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/'.$clean_wa.'" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>'.$a['wa_text'].'</span></a></aside>';
-					
+					$o .= '<aside class="index-card-base index-sidebar">';
+					if ( !empty( $a['title'] ) ) {
+						$o .= '<h3 class="fleet-gallery-title">' . esc_html( $a['title'] ) . '</h3>';
+					}
+					$o .= '<h2 style="font-size:1rem;margin:0 0 15px 0;">' . esc_html($a['index_title']) . '</h2>';
+					$o .= '<ul class="index-list">' . $items_html . '</ul>';
+					$o .= '<a href="https://wa.me/'.$clean_wa.'" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>'.$a['wa_text'].'</span></a></aside>';
+
 					$o .= '<div class="fleet-main">';
 					// Mobile Header
-					$o .= '<div class="index-card-base mobile-index-header"><h2 style="font-size:0.95rem;margin:0 0 15px 0;">' . esc_html($a['index_title']) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/'.$clean_wa.'" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>'.$a['wa_text'].'</span></a></div>';
-					
+					$o .= '<div class="index-card-base mobile-index-header">';
+					if ( !empty( $a['title'] ) ) {
+						$o .= '<h3 class="fleet-gallery-title">' . esc_html( $a['title'] ) . '</h3>';
+					}
+					$o .= '<h2 style="font-size:0.95rem;margin:0 0 15px 0;">' . esc_html($a['index_title']) . '</h2><ul class="index-list">' . $items_html . '</ul><a href="https://wa.me/'.$clean_wa.'" class="index-wa-support" target="_blank"><i class="wa-icon">w</i><span>'.$a['wa_text'].'</span></a>';
+					$o .= '</div>';
+
 					// Viewport & Row
 					$o .= '<div class="fleet-viewport"><div class="fleet-row">';
 					if ( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();
@@ -100,7 +112,7 @@ add_action( 'wp_enqueue_scripts', function() {
 					$o .= '<article class="vehicle-card">';
 					if($price) $o .= '<div class="price-badge">€' . esc_html($price) . '</div>';
 					$o .= '<div class="image-box">' . get_the_post_thumbnail( get_the_ID(), 'medium_large' ) . '</div>';
-					$o .= '<div class="content"><h3 class="model-name">' . get_the_title() . '</h3><div class="specs-list">';
+					$o .= '<div class="content"><h4 class="model-name">' . get_the_title() . '</h4><div class="specs-list">';
 					foreach(explode(',', get_the_excerpt()) as $s) if(!empty(trim($s))) $o .= '<span class="spec-pill">'.esc_html(trim($s)).'</span>';
 					$o .= '</div><div class="cta-group"><a href="'.esc_url($link).'" class="btn-book">Book Online</a></div></div></article>';
 					endwhile; wp_reset_postdata(); endif;
